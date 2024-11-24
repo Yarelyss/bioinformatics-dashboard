@@ -3,8 +3,8 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from Bio import SeqIO
-import random
 from collections import Counter
+from fpdf import FPDF
 
 # Configuración inicial del Dashboard
 st.set_page_config(page_title="Análisis Bioinformático", layout="centered")
@@ -66,6 +66,21 @@ def graficar_frecuencia(sequence):
         color=list(conteo.keys())
     )
     return fig
+
+def generar_pdf(results):
+    """Genera un archivo PDF con los resultados."""
+    pdf = FPDF()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+
+    pdf.cell(200, 10, txt="Resultados de Análisis Bioinformático", ln=True, align='C')
+    pdf.ln(10)
+
+    for index, row in results.iterrows():
+        pdf.cell(200, 10, txt=f"{row['Propiedad']}: {row['Valor']}", ln=True)
+
+    pdf.output("/mnt/data/resultados_bioinformaticos.pdf")
 
 # Input de la secuencia
 st.sidebar.subheader("Introduce tu secuencia")
@@ -152,15 +167,10 @@ if input_sequence:
         results = results.append({"Propiedad": "Contenido GC (%)", "Valor": gc_content}, ignore_index=True)
 
     if seq_type == "Proteína":
-        results = results.append(
-            {"Propiedad": "Residuos hidrofóbicos", "Valor": hydrophobic},
-            ignore_index=True
-        )
-        results = results.append(
-            {"Propiedad": "Residuos hidrofílicos", "Valor": hydrophilic},
-            ignore_index=True
-        )
+        results = results.append({"Propiedad": "Residuos hidrofóbicos", "Valor": hydrophobic}, ignore_index=True)
+        results = results.append({"Propiedad": "Residuos hidrofílicos", "Valor": hydrophilic}, ignore_index=True)
 
+    # Botón de descarga CSV
     st.download_button(
         label="Descargar resultados como CSV",
         data=results.to_csv(index=False),
@@ -168,15 +178,17 @@ if input_sequence:
         mime="text/csv"
     )
 
+    # Botón de descarga PDF
+    if st.button("Descargar resultados como PDF"):
+        generar_pdf(results)
+        st.success("PDF generado. [Descargar PDF](sandbox:/mnt/data/resultados_bioinformaticos.pdf)")
+
 # Pie de página
 st.sidebar.markdown("---")
 st.sidebar.write("**Instrucciones de uso:**")
-st.sidebar.markdown(
-    """
-    1. Introduce tu secuencia de ADN, ARN o proteína en el cuadro de texto.
-    2. Si no tienes una secuencia, haz clic en 'Cargar Ejemplo'.
-    3. También puedes subir un archivo FASTA para analizarlo.
-    4. Descarga los resultados en formato CSV si lo deseas.
-    """
+st.sidebar.write(
+    "1. Introduce tu secuencia de ADN, ARN o proteína en el cuadro de texto.\n"
+    "2. Si no tienes una secuencia, haz clic en 'Cargar Ejemplo'.\n"
+    "3. También puedes subir un archivo FASTA para analizarlo.\n"
+    "4. Descarga los resultados en formato CSV o PDF si lo deseas."
 )
-
