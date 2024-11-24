@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -170,8 +171,12 @@ if input_sequence:
 # Pie de página
 st.sidebar.markdown("---")
 st.sidebar.write("**Instrucciones de uso:**")
-st.sidebar.write(
-    "1. Introduce tu secuencia de ADN, ARN o proteína en el cuadro de texto.\n"
-    "2. Si no tienes una secuencia, haz clic en 'Cargar Ejemplo'.\n"
-    "3. También puedes subir un archivo FASTA para analizarlo.\n"
-    "4. Descarga los resultados en formato CSV si lo deseas."
+st.sidebar.markdown(
+    """
+    1. Introduce tu secuencia de ADN, ARN o proteína en el cuadro de texto.
+    2. Si no tienes una secuencia, haz clic en 'Cargar Ejemplo'.
+    3. También puedes subir un archivo FASTA para analizarlo.
+    4. Descarga los resultados en formato CSV si lo deseas.
+    """
+)
+
