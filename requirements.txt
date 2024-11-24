@@ -1,6 +1,6 @@
 
-streamlit
-plotly
-biopython
-pandas
-fpdf
+streamlit==1.20.0
+plotly==5.14.1
+biopython==1.81
+pandas==1.5.3
+fpdf==1.7.2
